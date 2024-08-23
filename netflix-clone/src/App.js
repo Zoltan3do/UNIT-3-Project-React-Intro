@@ -12,7 +12,7 @@ function App() {
       <Navbar />
       <main className="px-5 mt-5 ">
         <Tvshows />
-        <section className="container mt-5 px-0 mx-0  d-flex flex-column align-items-center d-lg-block ms-lg-6 ">
+        <section className="container mt-5 px-0 mx-0  d-flex flex-column align-items-center d-lg-block ms-lg-6  ">
           <TrendingNow term={"Avengers"} />
           <TrendingNow term={"Alien"} />
           <TrendingNow term={"Twilight"} />

@@ -34,7 +34,7 @@ class TrendingNow extends Component {
         return (
             <>
                 <h2 className="text-light fs-5 mb-3 mt-5">{this.props.term}</h2>
-                    <div id={carouselId} className="carousel slide d-flex justify-content-center w-100 my-0 mx-auto caroselloCentrato" data-ride="carousel">
+                    <div id={carouselId} className="carousel slide d-flex justify-content-center w-100 my-0 mx-auto caroselloCentrato " data-ride="carousel">
                         <div className="carousel-inner">
                             <div className="carousel-item active">
                                 <div className="row ">
