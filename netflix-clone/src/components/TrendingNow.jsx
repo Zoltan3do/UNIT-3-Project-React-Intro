@@ -1,97 +1,69 @@
-import React, { Component } from 'react';
-import "../App.css";
+import React, { useState, useEffect } from 'react';
+import { Carousel } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css'; 
 
-class TrendingNow extends Component {
+const TrendingNow = ({ term }) => {
+    const [films, setFilms] = useState([]);
 
-    state = {
-        films: []
-    }
-
-    fetchFilms = () => {
-        fetch(`https://www.omdbapi.com/?i=tt3896198&apikey=e8c1f24e&s=${this.props.term}`)
-            .then((response) => {
+    const fetchFilms = () => {
+        fetch(`https://www.omdbapi.com/?i=tt3896198&apikey=e8c1f24e&s=${term}`)
+            .then(response => {
                 if (response.ok) {
-                    return response.json()
+                    return response.json();
                 } else {
-                    throw new Error("errore nella chiamata")
+                    throw new Error("Errore nella chiamata");
                 }
             })
-            .then((data) => {
-                this.setState({ films: data.Search });
+            .then(data => {
+                if (data.Search) {
+                    const initialFilms = data.Search;
+                    const filledFilms = [...initialFilms];
+                    while (filledFilms.length % 6 !== 0) {
+                        filledFilms.push(initialFilms[filledFilms.length % initialFilms.length]);
+                    }
+                    setFilms(filledFilms);
+                }
             })
-            .catch((e) => {
+            .catch(e => {
                 console.error(e);
-            })
-    }
+            });
+    };
 
-    componentDidMount() {
-        this.fetchFilms();
-    }
+    useEffect(() => {
+        fetchFilms();
+    }, [term]);
 
-    render() {
-        const carouselId = `carousel-${this.props.term}`;
+    const createCarouselItems = () => {
+        const items = [];
+        const numSlides = Math.ceil(films.length / 6); 
 
-        return (
-            <>
-                <h2 className="text-light fs-5 mb-3 mt-5">{this.props.term}</h2>
-                    <div id={carouselId} className="carousel slide d-flex justify-content-center w-100 my-0 mx-auto caroselloCentrato " data-ride="carousel">
-                        <div className="carousel-inner">
-                            <div className="carousel-item active">
-                                <div className="row ">
-                                    {this.state.films.map((f, i) => {
-                                        if (i < 2) {
-                                            return (
-                                                <div key={i} className="col-4 col-lg-2 px-1 over"><img src={f.Poster} className="d-block w-100"
-                                                    alt={f.Title} />
-                                                </div>
-                                            )
-                                        } else if (i > 1 && i < 6) {
-                                            return (
-                                                <div key={i} className="col-4 col-lg-2 px-1 d-none d-lg-block over"><img src={f.Poster} className="d-block w-100"
-                                                    alt={f.Title} />
-                                                </div>
-                                            )
-                                        }
-                                        return null;
-                                    })}
-                                </div>
+        for (let i = 0; i < numSlides; i++) {
+            items.push(
+                <Carousel.Item key={i}>
+                    <div className="row">
+                        {films.slice(i * 6, i * 6 + 6).map((f, index) => (
+                            <div key={index} className="col-4 col-lg-2 px-1">
+                                <img src={f.Poster} className="d-block w-100" alt={f.Title} />
                             </div>
-
-                            <div className="carousel-item">
-                                <div className="row ">
-                                    {this.state.films.map((f, i) => {
-                                        if (i > 3 && i < 6) {
-                                            return (
-                                                <div key={i} className="col-4 col-lg-2 px-1 over"><img src={f.Poster} className="d-block w-100"
-                                                    alt={f.Title} />
-                                                </div>
-                                            )
-                                        } else if (i > 5 && i < 10) {
-                                            return (
-                                                <div key={i} className="col-4 col-lg-2 px-1 d-none d-lg-block over"><img src={f.Poster} className="d-block w-100"
-                                                    alt={f.Title} />
-                                                </div>
-                                            )
-                                        }
-                                        return null;
-                                    })}
-                                </div>
-                            </div>
-                        </div>
-                        <button className="carousel-control-prev" type="button" data-bs-target={`#${carouselId}`}
-                            data-bs-slide="prev">
-                            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span className="visually-hidden">Previous</span>
-                        </button>
-                        <button className="carousel-control-next" type="button" data-bs-target={`#${carouselId}`}
-                            data-bs-slide="next">
-                            <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span className="visually-hidden">Next</span>
-                        </button>
+                        ))}
                     </div>
-            </>
-        );
-    }
-}
+                </Carousel.Item>
+            );
+        }
+        return items;
+    };
+
+    return (
+        <>
+            <h2 className="text-light fs-5 mb-3 mt-5">{term}</h2>
+            <Carousel className="d-flex justify-content-center w-100 my-0 mx-auto caroselloCentrato">
+                {createCarouselItems()}
+            </Carousel>
+        </>
+    );
+};
 
 export default TrendingNow;
+
+
+
